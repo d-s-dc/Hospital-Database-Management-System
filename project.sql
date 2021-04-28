@@ -190,7 +190,7 @@ primary key(jun_ID,doc_ID)
 
 delimiter $$
 create trigger jun_rel_check
-before insert
+after insert
 on jun_relation for each row
 begin
 declare doc_d varchar(3);
@@ -210,20 +210,20 @@ foreign key (jun_ID,doc_ID) references jun_relation(jun_ID,doc_ID),
 foreign key (tech_ID) references lab_tech(tech_ID)
 );
 
--- delimiter $$
-
--- create trigger lab_rel_check
--- before insert 
--- on lab_relation for each row
--- begin
--- declare doc_d varchar(3);
--- declare lab_d table ( l_d varchar(3));
--- select d_id into lab_d from lab_tech,lab_d where new.tech_id = lab_tech.tech_id and lab_tech.lab_no = lab_d.lab_no;
--- select d_id into doc_d from doctor where new.doc_id = doctor.doc_id;
--- if doc_d<>lab_d then
--- signal sqlstate '45000' set message_text = "The department of doctor/junior doc and lab technician are not same";
--- end if;
--- end $$ delimiter ;
+delimiter $$
+create trigger lab_rel_check
+after insert 
+on lab_relation for each row
+begin
+declare doc_d varchar(3);
+drop temporary table if exists lab_dpt;
+create temporary table lab_dpt ( l_d varchar(3));
+insert into lab_dpt (select d_id from lab_tech,lab_d where new.tech_id = lab_tech.tech_id and lab_tech.lab_no = lab_d.lab_no);
+select d_id into doc_d from doctor where new.doc_id = doctor.doc_id;
+if doc_d not in (select * from lab_dpt) then
+signal sqlstate '45000' set message_text = "The department of doctor/junior doc and lab technician are not same";
+end if;
+end $$ delimiter ;
 
 -- Base data for admin
 insert into admin_h values('a1','Dhruv Singla',9465818638,'dhruv','Bathinda');
