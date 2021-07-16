@@ -1,0 +1,24 @@
+-- doctor
+select Doc_ID, Doc_Name, doctor.Salary, Age, Degree_level, doctor.years_exp, Specialization, doctor.night_shift_start, doctor.Night_shift_end, patients_attended, doctor.phone_no, doctor.d_id, d_name, jun_id, jun_name from ((doctor join department using (d_id)) left outer join jun_relation using(doc_id)) left outer join junior_doc using (jun_id) where doc_id = 'd1001';
+
+-- HR
+select HR_ID, HR_Name, phone_no from hr where hr_id = 'h2001';
+
+-- Junior Doctor
+select jun_ID, jun_Name, junior_doc.Salary, Qualifications, junior_doc.Years_exp, junior_doc.Night_shift_start, junior_doc.night_shift_end, junior_doc.phone_no, junior_doc.d_id, d_name, doc_id, doc_name from ((junior_doc join department using (d_id)) natural left outer join jun_relation) left outer join doctor using (doc_id) where jun_id = 'j1001';
+
+-- Patient
+select p_id, p_name, admission_status, patient.City, State,Age, no_of_tests_conducted, ongoing_medication, patient.phone_no, Gender, d_id, d_name,time_of_admission, tr_id, test_type, lab_no, previous_operations, Disability, previous_conditions, previous_disease, time_span_of_disease, previous_medication from (((patient natural left outer join test_report) natural left outer join medical_history_1) natural left outer join medical_history_2) join department using (d_id) where p_id = 'p1';
+
+-- Department
+select d_id, d_name, no_of_rooms, no_of_halls, no_of_consultancy_rooms, no_of_beds, beds_occupied, patient_discharge_average, patient_admissionrate_average from department where d_id = 'd1';
+
+-- Lab
+select lab_no, no_of_equipments, type_of_test, d_id, d_name from lab natural join lab_d natural join department where lab_no = 'l1';
+
+-- Lab Technician
+select tech_id, tech_name, phone_no, lab_no, type_of_test from lab_tech natural join lab where tech_id = 'l1001';
+
+-- Equipment
+select ventilator_in_use as 'Ventilators in use', beds_in_use as 'Beds in use', oxygen_cylinders_in_use as 'Oxygen cylinders in use' from equipments;
+ 
